@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brain Protocol — AI Agent Workspace Specification</title>
+  <meta name="description" content="An open specification for structuring AI agent workspaces. Markdown-first. Human-readable. Version-controlled.">
+
+  <!-- Design: Playfair Display + cyber-neon dark palette -->
+  <!-- Variant 3: Mysterious Manifesto — dramatic, literary, editorial -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0b0b0f;
+      --surface: #111116;
+      --border: #1c1c24;
+      --text: #e4e0f0;
+      --muted: #5a5570;
+      --accent: #b57aff;
+      --accent-light: #d4aaff;
+      --accent-green: #4dffa0;
+      --max: 800px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Source Sans 3', system-ui, sans-serif;
+      font-size: 1.05rem;
+      line-height: 1.75;
+      min-height: 100vh;
+    }
+
+    /* Atmospheric noise gradient */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(181, 122, 255, 0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 85% 90%, rgba(77, 255, 160, 0.04) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    main, header, footer { position: relative; z-index: 1; }
+
+    .container { max-width: var(--max); margin: 0 auto; padding: 0 2rem; }
+
+    /* HEADER */
+    header { padding: 2.5rem 0; }
+    header .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.1rem;
+      font-style: italic;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: 0.01em;
+    }
+    .logo em { font-style: normal; color: var(--accent); }
+    .spec-note {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    /* HERO */
+    .hero {
+      padding: 10rem 0 8rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero-intro {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-style: italic;
+      font-size: 0.9rem;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+      margin-bottom: 3rem;
+      opacity: 0.85;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(2.8rem, 7vw, 5rem);
+      font-weight: 400;
+      line-height: 1.05;
+      letter-spacing: -0.01em;
+      margin-bottom: 3rem;
+    }
+    h1 em {
+      font-style: italic;
+      color: var(--accent-light);
+    }
+
+    .hero-sub {
+      font-size: 1.1rem;
+      color: var(--muted);
+      max-width: 540px;
+      line-height: 1.9;
+      margin-bottom: 4rem;
+    }
+
+    .hero-rule {
+      width: 60px;
+      height: 1px;
+      background: var(--accent);
+      opacity: 0.4;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 2rem;
+    }
+    .htag {
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    /* WHAT SECTION */
+    .what-section {
+      padding: 7rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-numeral {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 0.75rem;
+      color: var(--accent);
+      opacity: 0.6;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 3rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    .section-numeral::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    h2 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 400;
+      line-height: 1.2;
+      margin-bottom: 2.5rem;
+    }
+    h2 em {
+      font-style: italic;
+      color: var(--accent-light);
+    }
+
+    .body-text {
+      color: var(--muted);
+      margin-bottom: 1.25rem;
+      line-height: 1.9;
+      max-width: 600px;
+    }
+
+    /* PULL QUOTE */
+    .pull-quote {
+      border-left: 2px solid var(--accent);
+      padding: 1.5rem 2rem;
+      margin: 3rem 0;
+      background: rgba(181, 122, 255, 0.04);
+    }
+    .pull-quote p {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-style: italic;
+      font-size: 1.2rem;
+      color: var(--text);
+      line-height: 1.65;
+      opacity: 0.85;
+    }
+
+    /* PRINCIPLES */
+    .principles {
+      margin-top: 4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .principle {
+      padding: 2rem 0;
+      border-top: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 60px 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+    .principle:last-child { border-bottom: 1px solid var(--border); }
+    .p-num {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-style: italic;
+      font-size: 2.5rem;
+      color: var(--border);
+      line-height: 1;
+      margin-top: 0.2rem;
+    }
+    .p-content h3 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.1rem;
+      font-weight: 400;
+      margin-bottom: 0.5rem;
+    }
+    .p-content p {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    /* STRUCTURE */
+    .structure-section {
+      padding: 7rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .dir-grid {
+      margin-top: 3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .dir-row {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      gap: 2rem;
+      padding: 1.5rem 0;
+      border-top: 1px solid var(--border);
+      align-items: baseline;
+    }
+    .dir-row:last-child { border-bottom: 1px solid var(--border); }
+    .dir-name {
+      font-family: 'Source Sans 3', monospace;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+    .dir-desc {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .code-sample {
+      margin-top: 3rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 2.5rem;
+      font-family: 'Source Sans 3', monospace;
+      font-size: 0.82rem;
+      line-height: 2;
+      position: relative;
+    }
+    .code-sample::before {
+      content: 'example.md';
+      position: absolute;
+      top: -1px;
+      right: 1.5rem;
+      background: var(--surface);
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      padding: 0 0.5rem;
+      border: 1px solid var(--border);
+      border-top: none;
+    }
+    .ck { color: var(--accent); opacity: 0.9; }
+    .cv { color: var(--text); }
+    .cs { color: #7acc7a; }
+    .ca { color: #7ec8e3; }
+    .cd { color: var(--muted); }
+
+    /* COMPAT */
+    .compat-section {
+      padding: 5rem 0;
+    }
+
+    .model-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    .model {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-style: italic;
+      font-size: 1.05rem;
+      color: var(--muted);
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border);
+      flex: 0 0 auto;
+      transition: color 0.2s;
+    }
+    .model:hover { color: var(--accent-light); }
+
+    /* FOOTER */
+    footer {
+      padding: 3rem 0;
+      border-top: 1px solid var(--border);
+    }
+    footer .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .f-copy {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-style: italic;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .f-link {
+      font-size: 0.82rem;
+      color: var(--muted);
+      text-decoration: none;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .f-link:hover {
+      color: var(--accent-light);
+      border-color: var(--accent);
+    }
+
+    @media (max-width: 640px) {
+      .hero { padding: 5rem 0 4rem; }
+      .what-section, .structure-section { padding: 4rem 0; }
+      .principle { grid-template-columns: 40px 1fr; gap: 1rem; }
+      .dir-row { grid-template-columns: 80px 1fr; }
+      footer .container { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <a class="logo" href="#"><em>Brain</em> Protocol</a>
+    <span class="spec-note">Open Specification</span>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="container">
+      <p class="hero-intro">An open specification for AI agent memory</p>
+      <h1>
+        The agent<br>
+        <em>remembers</em><br>
+        everything.
+      </h1>
+      <p class="hero-sub">
+        Structured workspace for language models. Markdown files, frontmatter metadata,
+        and a directory convention that gives any AI agent a persistent, auditable memory.
+      </p>
+      <div class="hero-rule"></div>
+      <div class="hero-tags">
+        <span class="htag">Markdown-first</span>
+        <span class="htag">Human-readable</span>
+        <span class="htag">Version-controlled</span>
+        <span class="htag">No vendor lock-in</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="what-section">
+    <div class="container">
+      <p class="section-numeral">I &mdash; What it is</p>
+
+      <h2>Not a framework.<br>A <em>convention</em>.</h2>
+
+      <p class="body-text">
+        Brain Protocol defines how an AI agent's memory should be organized on disk.
+        No databases, no vector stores, no proprietary formats.
+        Just directories and markdown files, the same way code lives in a git repo.
+      </p>
+
+      <p class="body-text">
+        A brain is a repository. Everything the agent knows &mdash; people, projects,
+        tasks, decisions, history &mdash; lives in structured markdown with frontmatter metadata.
+        Boot, read, work, commit. Repeat.
+      </p>
+
+      <div class="pull-quote">
+        <p>"If your agent's memory can't be opened in a text editor, it isn't yours."</p>
+      </div>
+
+      <div class="principles">
+        <div class="principle">
+          <span class="p-num">1</span>
+          <div class="p-content">
+            <h3>Plain text only</h3>
+            <p>Every piece of memory is a readable markdown file. Open it in any editor, grep it, version it. You own the data.</p>
+          </div>
+        </div>
+        <div class="principle">
+          <span class="p-num">2</span>
+          <div class="p-content">
+            <h3>Git is the database</h3>
+            <p>Memory has history. Diff two sessions, revert a bad decision, audit exactly what the agent changed and when.</p>
+          </div>
+        </div>
+        <div class="principle">
+          <span class="p-num">3</span>
+          <div class="p-content">
+            <h3>Frontmatter metadata</h3>
+            <p>Machine-readable context on every file: type, tags, relationships, timestamps. Enough structure for reasoning, not so much it becomes a burden.</p>
+          </div>
+        </div>
+        <div class="principle">
+          <span class="p-num">4</span>
+          <div class="p-content">
+            <h3>LLM-agnostic</h3>
+            <p>Claude, Gemini, GPT, Mistral &mdash; any model that can read a file speaks Brain Protocol. No SDK. No API key required.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="structure-section">
+    <div class="container">
+      <p class="section-numeral">II &mdash; Structure</p>
+
+      <h2>Six directories.<br><em>One coherent memory.</em></h2>
+
+      <div class="dir-grid">
+        <div class="dir-row">
+          <span class="dir-name">wiki/</span>
+          <span class="dir-desc">Entities &mdash; people, companies, projects, technologies, domains. The agent's knowledge graph.</span>
+        </div>
+        <div class="dir-row">
+          <span class="dir-name">diary/</span>
+          <span class="dir-desc">Temporal log. What happened, when, in what context. The agent's autobiographical memory.</span>
+        </div>
+        <div class="dir-row">
+          <span class="dir-name">todo/</span>
+          <span class="dir-desc">Open tasks tracked in structured markdown. The agent knows what needs doing.</span>
+        </div>
+        <div class="dir-row">
+          <span class="dir-name">inbox/</span>
+          <span class="dir-desc">Incoming items waiting to be processed. Email threads, notes, signals from external systems.</span>
+        </div>
+        <div class="dir-row">
+          <span class="dir-name">boot/</span>
+          <span class="dir-desc">System configuration: identity, personality, tools, protocols. Loaded at session start.</span>
+        </div>
+        <div class="dir-row">
+          <span class="dir-name">tools/</span>
+          <span class="dir-desc">API wrappers, automation scripts, integration code. What the agent can do, not just what it knows.</span>
+        </div>
+      </div>
+
+      <div class="code-sample">
+        <div><span class="cd">---</span></div>
+        <div><span class="ck">type</span><span class="cv">: </span><span class="cs">project</span></div>
+        <div><span class="ck">tags</span><span class="cv">: </span><span class="ca">[web, laravel, client]</span></div>
+        <div><span class="ck">status</span><span class="cv">: </span><span class="cs">active</span></div>
+        <div><span class="ck">created</span><span class="cv">: </span><span class="cs">2026-01-15</span></div>
+        <div><span class="ck">relates_to</span><span class="cv">: </span><span class="ca">[people/mario-rossi, companies/acme]</span></div>
+        <div><span class="cd">---</span></div>
+        <div>&nbsp;</div>
+        <div><span class="cd"># Content in plain markdown follows.</span></div>
+        <div><span class="cd"># The agent reads this. So can you.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="compat-section">
+    <div class="container">
+      <p class="section-numeral">III &mdash; Compatibility</p>
+
+      <h2>Works with<br><em>any model.</em></h2>
+
+      <p class="body-text">
+        If it can read a file, it speaks Brain Protocol.
+        No special integration. No API. Just point the model at the directory.
+      </p>
+
+      <div class="model-grid">
+        <span class="model">Claude</span>
+        <span class="model">Gemini</span>
+        <span class="model">GPT-4o</span>
+        <span class="model">Mistral</span>
+        <span class="model">Llama</span>
+        <span class="model">Any model &rarr;</span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container">
+    <span class="f-copy">Brain Protocol &mdash; open specification</span>
+    <a class="f-link" href="https://giobi.com" target="_blank" rel="noopener">A project by giobi.com</a>
+  </div>
+</footer>
+
+</body>
+</html>
